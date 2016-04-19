@@ -53,6 +53,7 @@ class Photo {
 	private $caption;
 
 	function __construct(){
+        
 		$this->thumb = new PhotoInstance();
 		$this->large = new PhotoInstance();
 		$this->hiRes = new PhotoInstance();
@@ -66,29 +67,29 @@ class Photo {
 	 */
 	public static function getPhotos($url){
 		$xh = new XMLHandler($url);
-		$photoItems = $xh->getNodes("photo");
+		$photoItems = $xh->getChildren("photo");
 		$photoList  = array();
 
 		foreach($photoItems as $photoNode){
 			$p = new Photo();
 
-			$p->setId($photoNode->getElementsByTagName("id")->item(0)->textContent);
-			$p->setAlt($photoNode->getElementsByTagName("htmlAlt")->item(0)->textContent);
-			//$p->setOrientation($photoNode->getElementsByTagName("orientation")->item(0)->textContent);
-      $p->setCaption($photoNode->getElementsByTagName("caption")->item(0)->textContent);
+			$p->setId((string)$photoNode->id);
+			$p->setAlt((string)$photoNode->htmlAlt);
+			$p->setOrientation((string)$photoNode->orientation);
+            $p->setCaption((string)$photoNode->caption);
 
 			//set thumbnail pic and large pic
-			$photoInstancesNode = $photoNode->getElementsByTagName("instance");
+			$photoInstancesNode = $photoNode->instances;
 
-			foreach ($photoInstancesNode as $pi){
-				$type = $pi->getElementsByTagName("type")->item(0)->textContent;
+			foreach ($photoInstancesNode->instance as $pi){
+
+				$type = $pi->type;
 				/* @var $pi DomElement */
 				if( $type == "Thumbnail" || $type == "Small")$p->getThumb()->parsePhotoInstance($pi);
 				elseif ($type == "Large" || $type == "Medium")$p->getLarge()->parsePhotoInstance($pi);
 				elseif ($type == "HighRes")$p->getHiRes()->parsePhotoInstance($pi);
 				elseif ($type == "Custom")$p->getCustom()->parsePhotoInstance($pi);
 			}
-
 			$photoList[] = $p;
 		}
 		return $photoList;
@@ -154,6 +155,7 @@ class Photo {
 	 * @return PhotoInstance
 	 */
 	public function getThumb() {
+        
 		return $this->thumb;
 	}
 
@@ -168,6 +170,7 @@ class Photo {
 	 * @return PhotoInstance
 	 */
 	public function getLarge() {
+        
 		return $this->large;
 	}
 
@@ -182,6 +185,7 @@ class Photo {
 	 * @return PhotoInstance
 	 */
 	public function getHiRes() {
+        
 		return $this->hiRes;
 	}
 

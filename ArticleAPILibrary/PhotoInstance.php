@@ -21,23 +21,26 @@ class PhotoInstance  {
      * @var string $width
      */
     private $url;
-
+    
+    private $type;
     /**
      * @return PhotoItem
      */
     function __construct(){
-        $this->width = "NULL";
-        $this->height = "NULL";
-        $this->url = "NULL";
+        $this->width = NULL;
+        $this->height = NULL;
+        $this->url = NULL;
+        $this->type = NULL;
     }
     
     /**
      * @param DOMNode $node
      */
     public function parsePhotoInstance($node){
-    	$this->width = $node->getElementsByTagName("width")->item(0)->nodeValue;
-        $this->height = $node->getElementsByTagName("height")->item(0)->nodeValue;
-        $this->url = $node->getElementsByTagName("url")->item(0)->nodeValue;
+    	$this->width = (string)$node->width;
+        $this->height = (string)$node->height;
+        $this->url = (string)$node->url;
+        $this->type = (string)$node->type;
     } 
     
     public function getWidth(){
@@ -51,5 +54,8 @@ class PhotoInstance  {
 	public function getUrl(){
     	return $this->url;
     }    
+    public function getType(){
+        return $this->type;
+    }
 }
 ?>

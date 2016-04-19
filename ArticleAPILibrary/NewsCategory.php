@@ -28,15 +28,18 @@ class NewsCategory {
      */
     public static function getCategories($url){
         $xh = new XMLHandler($url);
-
-        $nl = $xh->getNodes("category");
+        //var_dump("XML Handler obj",$xh);
+        $nl = $xh->getChildren("category");
+        //var_dump("category List object",$nl);
         $catList = array();
         foreach ($nl as $n) {
+            //var_dump("individual Category", $n);exit();
             $c = new NewsCategory();
-            $c->id = $n->getElementsByTagName("id")->item(0)->textContent;
-            $c->name = $n->getElementsByTagName("name")->item(0)->textContent;
+            $c->id = (string)$n->id;
+            $c->name = (string)$n->name;
             $catList[]=$c;
         }
+        //var_dump("usabele list",$catList);exit();
         return $catList;
     }
     

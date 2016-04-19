@@ -7,7 +7,6 @@
  */
 include_once 'NewsCategory.php';
 include_once 'Photo.php';
-include_once 'NewsComment.php';
 
 /**
  * Constant Definitions for XML elements and attributes
@@ -89,8 +88,8 @@ class NewsItem	{
 	private $priority;
 	/* @var String */
 	private $format;
-  /* @var String */
-  private $keywords;
+    /* @var String */
+    private $keywords;
 	/* @var photos[] */
 	private $photos;
 	/* @var NewsCategory[] */
@@ -116,55 +115,38 @@ class NewsItem	{
 	 * @return NewsItem[]
 	 */
 	public static function getNewsList($url, $format) {
-		//Exception thrown in XMLHandler constructor if url is incorrect	
+		//Exception thrown in XMLHandler constructor if url is incorrect
 		$xh = new XMLHandler($url);
-
-		$newsList = array();
+        $_newsList = array();
 		if(isset($xh)){
-			$news = $xh->getNodes(NEWS_LIST_ITEM);
-			$exceptionList = array();
+            $_news = $xh->getChildren(NEWS_LIST_ITEM);
 
-			foreach($news as $n){
+            foreach($_news as $n){
+                
 				/* @var $n DomElement */
 				$ni = new NewsItem();
-				try{
-					//Check if all required nodes exist, throw exception if not!
-					if($n->getElementsByTagName(ID)->length==0)throw new XMLNodeException("Element " . ID . " for " . NEWS_LIST_ITEM);
-					//set value of ID here to use in debugging!
-					$ni->id = $n->getElementsByTagName(ID)->item(0)->textContent;
-						
-					if($n->getElementsByTagName(PUBLISH_DATE)->length==0)throw new XMLNodeException("Element " . PUBLISH_DATE . " for " . NEWS_LIST_ITEM . " with id: " . $ni->id);
-					if(!$n->getAttribute(HREF))throw new XMLNodeException("Attribute " . HREF . " for " . NEWS_LIST_ITEM . " with id: " . $ni->id);
-					if($n->getElementsByTagName(HEADLINE)->length==0)throw new XMLNodeException("Element " . HEADLINE . " for " . NEWS_LIST_ITEM . " with id: " . $ni->id);
 
-					//Check if date is valid if not throw exception
-					$ni->publishDate = $n->getElementsByTagName(PUBLISH_DATE)->item(0)->textContent;
-					$dateIsValid = date_parse($ni->publishDate);
-					if(!$dateIsValid)throw new DateParseException("Invalid Date for " . PUBLISH_DATE . "  on " . NEWS_LIST_ITEM . " with id: " . $ni->id . "<br />\n");
-
-					//Set the value of all other required elements
-					$ni->href = $n->getAttribute(HREF);
-					$ni->headline = $n->getElementsByTagName(HEADLINE)->item(0)->textContent;
-					$ni->format = $format;
-						
-					//Add to newslist array
-					$newsList[] = $ni;
-				}
-				catch(XMLException $e){
-					$exceptionList[] = $e; //Add exception to a list
-				}
-				catch(DateParseException $e){
-					$exceptionList[] = $e;
-				}
-			}
-			//If exception list contains any exceptions throw a new exception which relays all exceptions to the user
-			if(!empty($exceptionList)){
-				echo implode("<br />", $exceptionList) . "<br /><br />";
+                $ni->id = (string)$n->{ID};
+                //Check if date is valid if not throw exception
+                $ni->publishDate = (string)$n->{PUBLISH_DATE};
+                $ni->href = (string)$n->attributes()[HREF];
+                $ni->headline = (string)$n->{HEADLINE};
+                $ni->format = $format;
+                //Add to newslist array
+                $_newsList[] = $ni;
 			}
 		}
-		return $newsList;
+		return $_newsList;
 	}
-
+    public static function getNewsItem($url, $id){
+        $single = new NewsItem();
+        $oneOff = array();
+        $single->href = $url.'news/'.$id.'/';
+        $single->format = 'html';
+        $oneOff[] = $single;
+        return $oneOff;
+        
+    }
 	/** @return String **/
 	public function getEncoding() {
 		if(empty($this->encoding)){
@@ -178,7 +160,7 @@ class NewsItem	{
 	public function getId() {
 		if(empty($this->id)){
 			$xh = $this->getFullNewsXML();
-			$this->id = $xh->getValue(ID);
+			$this->id = $xh->getVal(ID);
 		}
 		return $this->id;
 	}
@@ -187,7 +169,7 @@ class NewsItem	{
 	public function getPublishDate() {
 		if(empty($this->publishDate)){
 			$xh = $this->getFullNewsXML();
-			$this->publishDate = $xh->getValue(PUBLISH_DATE);
+			$this->publishDate = $xh->getVal(PUBLISH_DATE);
 		}
 		return $this->publishDate;
 	}
@@ -196,7 +178,7 @@ class NewsItem	{
 	public function getHeadline() {
 		if(empty($this->headline)){
 			$xh = $this->getFullNewsXML();
-			$this->headline = $xh->getValue(HEADLINE);
+			$this->headline = $xh->getVal(HEADLINE);
 		}
 		return $this->headline;
 	}
@@ -205,7 +187,7 @@ class NewsItem	{
 	public function getCategories() {
 		if(empty($this->categories)){
 			$xh = $this->getFullNewsXML();
-			$this->categories = NewsCategory::getCategories($xh->getHrefValue(CATEGORIES));
+			$this->categories = NewsCategory::getCategories($xh->getAttr(CATEGORIES, HREF));
 		}
 		return $this->categories;
 	}
@@ -214,7 +196,7 @@ class NewsItem	{
   public function getKeywords() {
     if(empty($this->categories)){
 			$xh = $this->getFullNewsXML();
-			$this->keywords = $xh->getValue(KEYWORDS);
+			$this->keywords = $xh->getVal(KEYWORDS);
 		}
 		return $this->keywords;
   }
@@ -223,8 +205,7 @@ class NewsItem	{
 	public function getCreatedDate() {
 		if(empty($this->createdDate)){
 			$xh = $this->getFullNewsXML();
-			$this->createdDate = $xh->getValue(CREATED_DATE);
-			if(empty($this->createdDate))throw new XMLNodeException("Element " . CREATED_DATE . " for " . NEWS_LIST_ITEM . " with id: " . $this->id . "<br />\n");
+			$this->createdDate = $xh->getVal(CREATED_DATE);
 		}
 		return $this->createdDate;
 	}
@@ -233,8 +214,7 @@ class NewsItem	{
 	public function getLastModifiedDate() {
 		if(empty($this->lastModifiedDate)){
 			$xh = $this->getFullNewsXML();
-			$this->lastModifiedDate = $xh->getValue(LAST_MODIFIED_DATE);
-			if(empty($this->lastModifiedDate))throw new XMLNodeException("Element " . LAST_MODIFIED_DATE . " for " . NEWS_LIST_ITEM . " with id: " . $this->id . "<br />\n");
+			$this->lastModifiedDate = $xh->getVal(LAST_MODIFIED_DATE);
 		}
 		return $this->lastModifiedDate;
 	}
@@ -243,7 +223,7 @@ class NewsItem	{
 	public function getPhotos() {
 		if(empty($this->photos)){
 			$xh = $this->getFullNewsXML();
-			$this->photos = Photo::getPhotos($xh->getHrefValue(PHOTOS));
+			$this->photos = Photo::getPhotos($xh->getAttr(PHOTOS, HREF));
 		}
 		return $this->photos;
 	}
@@ -252,7 +232,7 @@ class NewsItem	{
 	public function getComments() {
 		if(empty($this->comments)){
 			$xh = $this->getFullNewsXML();
-			$this->comments = NewsComment::getComments($xh->getHrefValue(COMMENTS));
+			$this->comments = NewsComment::getComments($xh->getAttr(COMMENTS, HREF));
 		}
 		return $this->comments;
 	}
@@ -261,7 +241,7 @@ class NewsItem	{
 	public function getExtract() {
 		if(empty($this->extract)){
 			$xh = $this->getFullNewsXML();
-			$this->extract = $xh->getValue(EXTRACT);
+			$this->extract = $xh->getVal(EXTRACT);
 		}
 		return $this->extract;
 	}
@@ -270,8 +250,7 @@ class NewsItem	{
 	public function getText() {
 		if(empty($this->text)){
 			$xh = $this->getFullNewsXML();
-			$this->text = $xh->getValue(TEXT);
-			//if(empty($this->text))throw new XMLNodeException("Element " . TEXT . " for " . NEWS_LIST_ITEM . " with id: " . $this->id . "<br />\n");
+			$this->text = $xh->getVal(TEXT);
 		}
 		return $this->text;
 	}
@@ -280,7 +259,7 @@ class NewsItem	{
 	public function getByLine() {
 		if(empty($this->byLine)){
 			$xh = $this->getFullNewsXML();
-			$this->byLine = $xh->getValue(BY_LINE);
+			$this->byLine = $xh->getVal(BY_LINE);
 		}
 		return $this->byLine;
 	}
@@ -289,7 +268,7 @@ class NewsItem	{
 	public function getTweetText() {
 		if(empty($this->tweetText)){
 			$xh = $this->getFullNewsXML();
-			$this->tweetText = $xh->getValue(TWEET_TEXT);
+			$this->tweetText = $xh->getVal(TWEET_TEXT);
 		}
 		return $this->tweetText;
 	}
@@ -298,7 +277,7 @@ class NewsItem	{
 	public function getSource() {
 		if(empty($this->source)){
 			$xh = $this->getFullNewsXML();
-			$this->source = $xh->getValue(SOURCE);
+			$this->source = $xh->getVal(SOURCE);
 		}
 		return $this->source;
 	}
@@ -307,8 +286,7 @@ class NewsItem	{
 	public function getState() {
 		if(empty($this->state)){
 			$xh = $this->getFullNewsXML();
-			$this->state = $xh->getValue(STATE);
-			if(empty($this->state))throw new XMLNodeException("Element " . STATE . " for " . NEWS_LIST_ITEM . " with id: " . $this->id . "<br />\n");
+			$this->state = $xh->getVal(STATE);
 		}
 		return $this->state;
 	}
@@ -317,7 +295,7 @@ class NewsItem	{
 	public function getClientQuote() {
 		if(empty($this->clientQuote)){
 			$xh = $this->getFullNewsXML();
-			$this->clientQuote = $xh->getValue(CLIENT_QUOTE);
+			$this->clientQuote = $xh->getVal(CLIENT_QUOTE);
 		}
 		return $this->clientQuote;
 	}
@@ -326,7 +304,7 @@ class NewsItem	{
 	public function getHtmlTitle() {
 		if(empty($this->htmlTitle)){
 			$xh = $this->getFullNewsXML();
-			$this->htmlTitle = $xh->getValue(HTML_TITLE);
+			$this->htmlTitle = $xh->getVal(HTML_TITLE);
 		}
 		return $this->htmlTitle;
 	}
@@ -335,7 +313,7 @@ class NewsItem	{
 	public function getHtmlMetaDescription() {
 		if(empty($this->htmlMetaDescription)){
 			$xh = $this->getFullNewsXML();
-			$this->htmlMetaDescription = $xh->getValue(HTML_META_DESCRIPTION);
+			$this->htmlMetaDescription = $xh->getVal(HTML_META_DESCRIPTION);
 		}
 		return $this->htmlMetaDescription;
 	}
@@ -344,7 +322,7 @@ class NewsItem	{
 	public function getHtmlMetaKeywords() {
 		if(empty($this->htmlMetaKeywords)){
 			$xh = $this->getFullNewsXML();
-			$this->htmlMetaKeywords = $xh->getValue(HTML_META_KEYWORDS);
+			$this->htmlMetaKeywords = $xh->getVal(HTML_META_KEYWORDS);
 		}
 		return $this->htmlMetaKeywords;
 	}
@@ -353,7 +331,7 @@ class NewsItem	{
 	public function getHtmlMetaLanguage() {
 		if(empty($this->htmlMetaLanguage)){
 			$xh = $this->getFullNewsXML();
-			$this->htmlMetaLanguage = $xh->getValue(HTML_META_LANGUAGE);
+			$this->htmlMetaLanguage = $xh->getVal(HTML_META_LANGUAGE);
 		}
 		return $this->htmlMetaLanguage;
 	}
@@ -362,7 +340,7 @@ class NewsItem	{
 	public function getTags() {
 		if(empty($this->tags)){
 			$xh = $this->getFullNewsXML();
-			$this->tags = $xh->getValue(TAGS);
+			$this->tags = $xh->getVal(TAGS);
 		}
 		return $this->tags;
 	}
@@ -371,7 +349,7 @@ class NewsItem	{
 	public function getPriority() {
 		if(empty($this->priority)){
 			$xh = $this->getFullNewsXML();
-			$this->priority = $xh->getValue(PRIORITY);
+			$this->priority = $xh->getVal(PRIORITY);
 		}
 		return $this->priority;
 	}
@@ -380,7 +358,7 @@ class NewsItem	{
 	public function getFormat() {
 		if(empty($this->format)){
 			$xh = $this->getFullNewsXML();
-			$this->htmlMetaLanguage = $xh->getAttributeValue(TEXT, FORMAT);
+			$this->htmlMetaLanguage = $xh->getAttr(TEXT, FORMAT);
 		}
 		return $this->format;
 	}
