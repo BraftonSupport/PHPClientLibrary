@@ -28,6 +28,8 @@ class AdferoHelpers {
     public function GetRawResponse($uri) {
         
         $ch = curl_init($uri);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array("X-Forwarded-Proto"));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         return (string) curl_exec($ch);
