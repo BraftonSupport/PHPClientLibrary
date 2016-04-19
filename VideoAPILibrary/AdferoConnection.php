@@ -1,7 +1,7 @@
 <?php
-//Used to determine type of connection to use to retrieve the XML from the api
-class Connection{
+class AdferoConnection{
     
+    public static $instance = null;
     public $url;
     
     public $connection_type = null;
@@ -10,40 +10,27 @@ class Connection{
     
     public $response;
     
+    private static $force_connection = false;
+    
     public function __construct($url){
-        $this->url = $this->protocol($url);
-
+        $this->url = $url;
         $this->get_connection_type();
+        var_dump($this->connection_type);
         
     }
-    //Determine the type of connection to use.  if a connection type was passed to the ApiHandler it will be used instead.
+    
     private function get_connection_type(){
-        //Check if Force Connection was setup by passing a connection string to ApiHandler
-        if(defined('BRAFTON_FORCE_CONNECTION')){
-            $this->connection_type = BRAFTON_FORCE_CONNECTION;
+        if(self::$force_connection){
+            $this->connection_type = self::$force_connection;
             return;
         }
-        //Look for fopen and allow_url_fopen settings to allow a simple connection
         if(function_exists('fopen') && ini_get('allow_url_fopen')){
             $this->connection_type = 'fopen';
         }
-        //Check if curl is available if the above option was not available
         else if(function_exists('curl_init')){
             $this->connection_type = 'curl';
         }
     }
-    //Determine if the url passed is indeed a valid url with http or https else assume this is an archive.
-    private function protocol($url){
-        $parse = parse_url($url);
-        if( !($parse['scheme'] == 'http') && !($parse['scheme'] == 'https') ){
-            return 'file://'.$url;   
-        }
-        $scheme = $parse['scheme']."://";
-        
-        unset($parse['scheme']);
-        return $scheme.join("", $parse);
-    }
-    //Retrieve the xml as a string 
     public function getFeed(){
         if($this->connection_type != null){
             $connect = $this->connection_type.'_connection';
@@ -53,7 +40,6 @@ class Connection{
         }
         return false;
     }
-    //Retrieve the XML using curl
     private function curl_connection(){
         $url = $this->url;
         if(!isset($ch)){
@@ -65,17 +51,17 @@ class Connection{
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         $feed_string = curl_exec($ch); 
         $hinfo = curl_getinfo($ch);
-        $this->parse_headers_curl($hinfo);
+        $this->parseHeaders_curl($hinfo);
         return $feed_string;
     }
-    //Retrieve the XML using fopen
+    
     private function fopen_connection(){
         $con = file_get_contents($this->url);
         $this->parseHeaders_fopen($http_response_header);
         return $con;
     }
-    //Parse the headers if using fopen
-    private function parse_headers_fopen( $headers ){
+    
+    private function parseHeaders_fopen( $headers ){
         $head = array();
         foreach( $headers as $k=>$v )
         {
@@ -93,10 +79,15 @@ class Connection{
 
         $this->response = $head;
     }
-    //parse the headers if using curl
     private function parseHeaders_curl($headers){
         $headers['Content_type'] = explode(';', $headers['content_type']);
 
         $this->response = $headers;
+    }
+    public static function force_connection($connection){
+        if(self::$force_connection){
+            return;   
+        }
+        self::$force_connection = $connection;
     }
 }

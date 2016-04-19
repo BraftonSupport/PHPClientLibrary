@@ -125,7 +125,8 @@ class AdferoFeedsClient {
      */
     private function GetFeed($id, $properties, $fields) {
         $uri = $this->GetUri($id, null, "xml", $properties, $fields, null, null);
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         $xmlString = AdferoHelpers::GetXMLFromUri($uri);
         return $this->GetFeedFromXmlString($xmlString);
     }
@@ -152,7 +153,8 @@ class AdferoFeedsClient {
                 throw new InvalidArgumentException($format . 'format not supported');
                 break;
         }
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         return AdferoHelpers::GetRawResponse($uri);
     }
 
@@ -179,7 +181,8 @@ class AdferoFeedsClient {
                 throw new InvalidArgumentException($format . 'format not supported');
                 break;
         }
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         return AdferoHelpers::GetRawResponse($uri);
     }
 
@@ -222,7 +225,8 @@ class AdferoFeedsClient {
      */
     private function ListFeedsForFeed($offset, $limit, $properties, $fields) {
         $uri = $this->GetUri(null, null, "xml", $properties, null, $offset, $limit);
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         $xmlString = AdferoHelpers::GetXMLFromUri($uri);
         $feeds = $this->ListFeedsFromXmlString($xmlString);
         $feeds->limit = $limit;

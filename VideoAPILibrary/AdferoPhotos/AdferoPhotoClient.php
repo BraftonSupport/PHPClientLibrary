@@ -18,8 +18,11 @@ class AdferoPhotoClient {
      * @param string $baseUri Uri of the API provided by your account manager
      * @throws \InvalidArgumentException 
      */
-    function __construct($baseUri) {
-        if (!preg_match('|^http://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $baseUri)) {
+    function __construct($baseUri, $connection = false) {
+        if($connection){
+            AdferoConnection::force_connection($connection);
+        }
+         if (!preg_match('|^http://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $baseUri) && !preg_match('|^https://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $baseUri)) {
             throw new \InvalidArgumentException('Not a valid uri');
         };
         if (!preg_match('/\/$/', $baseUri)) {

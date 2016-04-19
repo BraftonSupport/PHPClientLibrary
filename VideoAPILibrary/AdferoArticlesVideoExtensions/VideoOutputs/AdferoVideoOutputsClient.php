@@ -132,7 +132,8 @@ class AdferoVideoOutputsClient {
      */
     private function GetVideoOutput($id, $properties, $fields) {
         $uri = $this->GetUri($id, null, "xml", $properties, $fields, null, null);
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         $xmlString = AdferoHelpers::GetXMLFromUri($uri);
         return $this->GetVideoOutputFromXmlString($xmlString);
     }
@@ -160,7 +161,8 @@ class AdferoVideoOutputsClient {
                 break;
         }
 
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         return AdferoHelpers::GetRawResponse($uri);
     }
 
@@ -189,7 +191,8 @@ class AdferoVideoOutputsClient {
                 break;
         }
 
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         return AdferoHelpers::GetRawResponse($uri);
     }
 
@@ -237,7 +240,8 @@ class AdferoVideoOutputsClient {
      */
     private function ListVideoOutputsForArticle($articleId, $offset, $limit, $properties, $fields) {
         $uri = $this->GetUri($articleId, "articleId", "xml", $properties, $fields, $offset, $limit);
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         $xmlString = AdferoHelpers::GetXMLFromUri($uri);
         $videoOutputs = $this->ListVideoOutputsFromXmlString($xmlString);
         $videoOutputs->limit = $limit;

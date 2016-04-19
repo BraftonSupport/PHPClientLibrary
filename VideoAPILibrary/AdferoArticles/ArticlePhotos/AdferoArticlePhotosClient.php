@@ -137,7 +137,8 @@ class AdferoArticlePhotosClient {
      */
     private function ListArticlePhotos($articleId, $offset, $limit, $properties, $fields) {
         $uri = $this->GetUri($articleId, "articleId", "xml", $properties, $fields, $offset, $limit);
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         $xmlString = AdferoHelpers::GetXMLFromUri($uri);
         $articlePhotos = $this->ListArticlePhotosFromXmlString($xmlString);
         $articlePhotos->limit = $limit;
@@ -169,7 +170,8 @@ class AdferoArticlePhotosClient {
                 throw new InvalidArgumentException($format . 'format not supported');
                 break;
         }
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         return AdferoHelpers::GetRawResponse($uri);
     }
 
@@ -183,7 +185,8 @@ class AdferoArticlePhotosClient {
      */
     private function GetArticlePhoto($id, $properties, $fields) {
         $uri = $this->GetUri($id, null, "xml", $properties, $fields, null, null);
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         $xmlString = AdferoHelpers::GetXMLFromUri($uri);
         return $this->GetArticlePhotoFromXmlString($xmlString);
     }
@@ -210,7 +213,8 @@ class AdferoArticlePhotosClient {
                 throw new InvalidArgumentException($format . 'format not supported');
                 break;
         }
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         return AdferoHelpers::GetRawResponse($uri);
     }
 

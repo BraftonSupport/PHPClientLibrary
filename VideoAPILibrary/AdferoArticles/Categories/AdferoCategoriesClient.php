@@ -189,7 +189,8 @@ class AdferoCategoriesClient {
      */
     private function GetCategory($id, $properties, $fields) {
         $uri = $this->GetUri($id, null, "xml", $properties, $fields, null, null);
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         $xmlString = AdferoHelpers::GetXMLFromUri($uri);
         return $this->GetCategoryFromXmlString($xmlString);
     }
@@ -216,7 +217,8 @@ class AdferoCategoriesClient {
                 throw new InvalidArgumentException($format . 'format not supported');
                 break;
         }
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         return AdferoHelpers::GetRawResponse($uri);
     }
 
@@ -243,7 +245,8 @@ class AdferoCategoriesClient {
                 throw new InvalidArgumentException($format . 'format not supported');
                 break;
         }
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         return AdferoHelpers::GetRawResponse($uri);
     }
 
@@ -270,7 +273,8 @@ class AdferoCategoriesClient {
                 throw new InvalidArgumentException($format . 'format not supported');
                 break;
         }
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         return AdferoHelpers::GetRawResponse($uri);
     }
 
@@ -311,7 +315,8 @@ class AdferoCategoriesClient {
      */
     public function ListCategoriesForFeed($feedId, $offset, $limit, $properties, $fields) {
         $uri = $this->GetUri($feedId, "feedId", "xml", $properties, $fields, $offset, $limit);
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         $xmlString = AdferoHelpers::GetXMLFromUri($uri);
         $categories = $this->ListCategoriesFromXmlString($xmlString);
         $categories->limit = $limit;
@@ -331,7 +336,8 @@ class AdferoCategoriesClient {
      */
     private function ListCategoriesForArticle($articleId, $offset, $limit, $properties, $fields) {
         $uri = $this->GetUri($articleId, "articleId", "xml", $properties, $fields, $offset, $limit);
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         $xmlString = AdferoHelpers::GetXMLFromUri($uri);
         $categories = $this->ListCategoriesFromXmlString($xmlString);
         $categories->limit = $limit;

@@ -174,7 +174,8 @@ class AdferoVideoPlayersClient {
      */
     private function GetVideoPlayer($articleId, $playerName, $playerVersion, $properties, $fields) {
         $uri = $this->GetUri($articleId, $playerName, $playerVersion, null, null, "xml", $properties, $fields);
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         $xmlString = AdferoHelpers::GetXMLFromUri($uri);
         return $this->GetVideoPlayerFromXmlString($xmlString);
     }
@@ -193,7 +194,8 @@ class AdferoVideoPlayersClient {
      */
     private function GetVideoPlayerWithFallback($articleId, $playerName, $playerVersion, $fallbackPlayerName, $fallbackPlayerVersion, $properties, $fields) {
         $uri = $this->GetUri($articleId, $playerName, $playerVersion, $fallbackPlayerName, $fallbackPlayerVersion, "xml", $properties, $fields);
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         $xmlString = AdferoHelpers::GetXMLFromUri($uri);
         return $this->GetVideoPlayerFromXmlString($xmlString);
     }
@@ -224,7 +226,8 @@ class AdferoVideoPlayersClient {
                 throw new \InvalidArgumentException($format . 'format not supported');
                 break;
         }
-        $uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        //$uri = "http://" . $this->credentials->getPublicKey() . ":" . $this->credentials->getSecretKey() . "@" . str_replace("http://", "", $uri);
+        $uri = AdferoHelpers::BuildUri($this->credentials->getPublicKey(), $this->credentials->getSecretKey(), $uri);
         return AdferoHelpers::GetRawResponse($uri);
     }
 

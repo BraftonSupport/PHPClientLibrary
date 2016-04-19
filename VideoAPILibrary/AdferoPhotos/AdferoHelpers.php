@@ -1,5 +1,5 @@
 <?php
-
+include "/../AdferoArticles/AdferoHelpers.php";
 /**
  * Description of Helpers
  *
@@ -12,7 +12,9 @@ class AdferoHelpers {
      * @return string 
      */
     public function GetXMLFromUri($uri) {
-        $xml = simplexml_load_file($uri);
+        //$xml = simplexml_load_file($uri);
+        $connection = new AdferoConnection($uri);
+        $xml = simplexml_load_string($connection->getFeed());
         return $xml->asXML();
     }
 
@@ -22,6 +24,7 @@ class AdferoHelpers {
      * @return string 
      */
     public function GetRawResponse($uri) {
+        //var_dump("using Raw response");
         $ch = curl_init($uri);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
