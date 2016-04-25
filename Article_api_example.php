@@ -8,7 +8,8 @@ echo '<pre>';
  * Define your API_DOMAIN eg. https://api.brafton.com
  * 
  * */
-define("API_KEY", '304908f3-50d2-4aae-95a6-eb013feb1fc6');
+define("API_KEY", 'b9c906b3-90a9-47a5-9246-dc491e8c70eb');
+//define("API_KEY", '064d00e7-8da6-416e-b80f-bd11b592ad4b');
 define("API_DOMAIN", 'https://api.brafton.com/');
 
 /*
@@ -38,6 +39,7 @@ $articles = $connection->getNewsHTML();
  * Loop through the list of articles
  * 
  * */
+
 foreach($articles as $article){
     //var_dump("First article",$article);
     //use this id to uniquely identify your articles.
@@ -52,7 +54,8 @@ foreach($articles as $article){
     
     // Optional article Attributes.  Items listed here are optional only and may not exist in your feed
     //See NewsCategory.php for information about the Category object
-    $categories = $article->getCategories(); //returns array of category objects. 
+    $categories = $article->getCategories(); //returns array of category objects.
+
     $keywords = $article->getKeywords(); //returns string
     //See Photo.php for information about the Photo object and PhotoInstance.php for information about each instance object.
     $photos = $article->getPhotos(); //returns array of photo instance objects. 

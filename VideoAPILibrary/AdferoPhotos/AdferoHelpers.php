@@ -1,5 +1,5 @@
 <?php
-include "/../AdferoArticles/AdferoHelpers.php";
+include dirname(__FILE__). "/../AdferoConnection.php";
 /**
  * Description of Helpers
  *
@@ -32,7 +32,13 @@ class AdferoHelpers {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         return (string) curl_exec($ch);
     }
-
+    public static function BuildUri($public, $secret, $uri){
+        if(strpos($uri, "https://") !== false){
+            return "https://" . $public . ":" . $secret . "@" . str_replace("https://", "", $uri);
+        }else{
+            return "http://" . $public . ":" . $secret . "@" . str_replace("http://", "", $uri);
+        }
+    }
 }
 
 ?>
