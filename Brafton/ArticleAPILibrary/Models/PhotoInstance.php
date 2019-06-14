@@ -1,4 +1,5 @@
 <?php
+namespace Brafton\ArticleAPILibrary\Models;
 /**
  * @package SamplePHPApi
  */

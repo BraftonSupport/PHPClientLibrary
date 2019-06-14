@@ -1,4 +1,5 @@
 <?php
+namespace Brafton\ArticleAPILibrary\Models;
 /**
  * @package SamplePHPApi
  */
@@ -7,7 +8,7 @@
  */
 include_once 'NewsCategory.php';
 include_once 'Photo.php';
-
+include_once 'DateParseException.php';
 /**
  * Constant Definitions for XML elements and attributes
  */
@@ -364,9 +365,3 @@ class NewsItem	{
 		return $this->format;
 	}
 }
-/**
- * Custom Exception DateParseException to be thrown if a date does not parse correctly
- * @package SamplePHPApi
- */
-class DateParseException extends Exception{}
-?>

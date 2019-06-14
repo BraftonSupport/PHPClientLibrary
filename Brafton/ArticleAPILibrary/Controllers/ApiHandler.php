@@ -1,4 +1,5 @@
 <?php
+namespace Brafton\ArticleAPILibrary\Controllers;
 /** 
  * @package SamplePHPApi
 */

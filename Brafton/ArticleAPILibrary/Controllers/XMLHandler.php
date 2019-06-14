@@ -1,4 +1,5 @@
 <?php
+namespace Brafton\ArticleAPILibrary\Controllers;
 require_once 'Connection.php';
 /**
  * @package SamplePHPApi
@@ -33,9 +34,9 @@ class XMLHandler {
                     throw new XMLLoadException($url);   
                 }
             }else{
-                throw new XMLNotValidXML($url);
+                throw new XMLInvalidException($url);
             }
-        }catch(XMLNotValidXML $e){
+        }catch(XMLException $e){
             echo $e->getMessage();
         }
 	}
@@ -69,6 +70,7 @@ class XMLHandler {
         $tmp = $this->_doc->$element->attributes();
         return (string)$tmp[$attr];
     }
+    //FLAGGED FOR DELETION v
 	/**
 	 * @param String $element
 	 * @return String
@@ -79,39 +81,5 @@ class XMLHandler {
 	}
 }
 
-/**
- * Custom Exception XMLException
- * @package SamplePHPApi
- */
-class XMLException extends Exception{}
 
-/**
- * Custom Exception XMLLoadException thrown if an XML source file is not found
- * @package SamplePHPApi
- */
-class XMLLoadException extends XMLException{
-	function __construct($message, $code=""){
-		$this->message = "Could not load URL: " . $message;
-	}
-}
-
-/**
- * Custom Exception XMLNodeException thrown if a required XML element is not found
- * @package SamplePHPApi
- */
-class XMLNodeException extends XMLException{
-	function __construct($message, $code=""){
-		$this->message = "Could not find XMLNode: " . $message;
-	}
-}
-class XMLPageNotFound extends XMLException{
-    function __construct($message, $code = 2){
-        $this->message = "A 404 Page not found error was returned for ".$message; 
-    }
-}
-class XMLNotValidXML extends XMLException{
-    function __construct($message, $code = 2){
-        $this->message = "No Valid XML was returned from ".$message; 
-    }
-}
 ?>

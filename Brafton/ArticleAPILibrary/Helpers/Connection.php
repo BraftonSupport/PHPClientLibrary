@@ -1,4 +1,5 @@
 <?php
+namespace Brafton\ArticleAPILibrary\Helpers;
 //Used to determine type of connection to use to retrieve the XML from the api
 class Connection{
     
